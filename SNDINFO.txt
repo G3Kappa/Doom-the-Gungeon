@@ -1,0 +1,2 @@
+// Weapons
+RogueSpecial/Fire	ROGSPEF0

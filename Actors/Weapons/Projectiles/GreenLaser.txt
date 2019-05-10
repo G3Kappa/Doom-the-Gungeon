@@ -1,0 +1,37 @@
+Class GreenLaser : ProjectileBase 
+{
+    override void BeginPlay()
+	{
+		Super.BeginPlay();
+		// BounceCount += 2;
+	}
+	
+	Default 
+	{
+		Radius 2;
+		Height 16;
+		Speed 25;
+		Damage (4);
+		Projectile;
+		Species "PlayerProjectile";
+		DamageType "PlayerDamage";
+		Decal "BulletChip";
+		+THRUSPECIES;
+	}
+	
+	States
+	{
+		Spawn:
+			MSRP A 4 Bright Light("GREENLASER0");
+			MSRP A 4 Bright Light("GREENLASER1");
+			loop;
+		Death:
+		Crash:
+			MSRP B 2 Bright;
+			MSRP CDE 2 Bright;
+			stop;
+		XDeath:
+			TNT1 A 0;
+			stop;
+	}
+}

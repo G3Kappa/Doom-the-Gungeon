@@ -1,0 +1,17 @@
+pulselight GREENLASER0
+{
+    color 0 0.8 0
+    size 24
+	secondarySize 48
+	interval 0.5
+    attenuate 1
+}
+
+pulselight GREENLASER1
+{
+    color 0.6 1 0.4
+    size 32
+	secondarySize 56
+	interval 0.5
+    attenuate 1
+}

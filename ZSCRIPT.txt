@@ -1,0 +1,20 @@
+#include "Actors/Weapons/RogueSpecial.txt"
+
+Class ProjectileBase : Actor 
+{
+    override void BeginPlay()
+	{
+		BounceCount = CountInv("Clip") + 1;
+	}
+	
+	Default 
+	{
+		BounceType "Hexen"; // Bounces forever and doesn't lose momentum to walls.
+	}
+	
+	States 
+	{
+		Spawn:
+			Stop;
+	}
+}
