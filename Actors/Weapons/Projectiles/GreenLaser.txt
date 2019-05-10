@@ -5,7 +5,7 @@ Class GreenLaser : ProjectileBase
 		Radius 2;
 		Height 16;
 		Speed 25;
-		Damage (4);
+		DamageFunction (5);
 		Projectile;
 		Species "PlayerProjectile";
 		DamageType "PlayerDamage";
