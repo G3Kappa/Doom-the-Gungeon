@@ -16,16 +16,16 @@ Class GreenLaser : ProjectileBase
 	States
 	{
 		Spawn:
-			RSGL A 0 Bright;
+			TNT1 A 2;
 			RSGL A 12 Bright Light("GREENLASER0");
-			goto Crash;
+			Goto Crash;
 		Death:
 		Crash:
 			MSRP B 2 Bright;
 			MSRP CDE 2 Bright;
-			stop;
+			Stop;
 		XDeath:
 			TNT1 A 0;
-			stop;
+			Stop;
 	}
 }
