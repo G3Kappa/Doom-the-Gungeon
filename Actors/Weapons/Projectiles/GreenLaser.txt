@@ -1,11 +1,5 @@
 Class GreenLaser : ProjectileBase 
 {
-    override void BeginPlay()
-	{
-		Super.BeginPlay();
-		// BounceCount += 2;
-	}
-	
 	Default 
 	{
 		Radius 2;
@@ -22,9 +16,9 @@ Class GreenLaser : ProjectileBase
 	States
 	{
 		Spawn:
-			MSRP A 4 Bright Light("GREENLASER0");
-			MSRP A 4 Bright Light("GREENLASER1");
-			loop;
+			RSGL A 0 Bright;
+			RSGL A 12 Bright Light("GREENLASER0");
+			goto Crash;
 		Death:
 		Crash:
 			MSRP B 2 Bright;

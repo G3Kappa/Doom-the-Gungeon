@@ -1,20 +1,41 @@
+// Weapons
 #include "Actors/Weapons/RogueSpecial.txt"
+// Items
+#include "Actors/Items/BouncyBullets.txt"
 
 Class ProjectileBase : Actor 
 {
-    override void BeginPlay()
+    override void PostBeginPlay()
 	{
-		BounceCount = CountInv("Clip") + 1;
+		BounceCount = CountInv("BouncyBullets", AAPTR_PLAYER1) + 1;
 	}
 	
 	Default 
 	{
 		BounceType "Hexen"; // Bounces forever and doesn't lose momentum to walls.
+		BounceCount 1;
 	}
 	
 	States 
 	{
 		Spawn:
 			Stop;
+	}
+}
+
+Class ItemBase : Inventory 
+{
+	Default 
+	{
+		Inventory.Amount 1;
+		Inventory.MaxAmount 99;
+		+INVENTORY.PERSISTENTPOWER;
+	}
+}
+
+class WeaponBase : Weapon 
+{
+	Default 
+	{
 	}
 }

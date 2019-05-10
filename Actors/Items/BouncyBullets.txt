@@ -1,0 +1,7 @@
+Class BouncyBullets : ItemBase
+{
+	Default 
+	{
+		Inventory.PickupMessage "Deletes itself";
+	}
+}
