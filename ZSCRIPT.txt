@@ -14,6 +14,8 @@ Class ProjectileBase : Actor
 	{
 		BounceType "Hexen"; // Bounces forever and doesn't lose momentum to walls.
 		BounceCount 1;
+		BounceFactor 1;
+		WallBounceFactor 1;
 	}
 	
 	States 
