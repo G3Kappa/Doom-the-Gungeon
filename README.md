@@ -11,6 +11,17 @@ Sprites are ripped from EtG and converted into 3D sprites manually by first recr
 
 Sounds are ripped from EtG with the aid of a few tools provided in the `_GungeonSoundbank` directory. **TODO: Explain usage there**.
 
+## Naming Conventions
+
+TODO: Tbh le sigle sono ambigue e dovremmo dedicare una lettera o due al tipo di risorsa.
+
+| Template | Example | Description |
+| --- | --- | --- |
+| NNNNFA | RSGNA0 | Viewmodel sprites for a gun |
+| NNNNFA[FA] | RSGLA2A8 | Sprites for a projectile |
+| NNNNNNFX | ROGSPEF0 | Sound for a gun being shot |
+| NNNNNNRX | ROGSPER0 | Sound for a gun being reloaded |
+
 # Issues
 
 This mod is not multiplayer compatible yet. However, it will be eventually since EtG's coop is wack.
