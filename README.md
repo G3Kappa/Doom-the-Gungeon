@@ -7,7 +7,7 @@
 
 # Installing
 
-Simply download the repository as a zip, change the archive's extension to **pk3** and import it in your launcher of choice such as ZDL.
+Simply download the repository as a zip, change the archive's extension to **pk3** and import it in your launcher of choice such as ZDL. **TODO: Make this not a lie**
 
 # For Contributors
 
