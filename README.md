@@ -3,7 +3,13 @@
 
 # Requirements
 
-GZDoom is required to run this mod. Sacrifices had to be made in order to \*squeeze the juice\*.
+[GZDoom](https://www.zdoom.org/downloads) is required to run this mod. Sacrifices had to be made in order to \*squeeze the juice\*.
+
+## For Contributors
+
+Sprites are ripped from EtG and converted into 3D sprites manually by first recreating them in [MagicaVoxel](https://ephtracy.github.io/) as 3D models and then passing the exported .vox to [IsoVoxel](https://github.com/tommyettinger/IsoVoxel). **This process is suitable for being automated in the near future**.
+
+Sounds are ripped from EtG with the aid of a few tools provided in the `_GungeonSoundbank` directory. **TODO: Explain usage there**.
 
 # Issues
 
