@@ -17,7 +17,7 @@ TODO: Tbh le sigle sono ambigue e dovremmo dedicare una lettera o due al tipo di
 
 | Template | Example | Description |
 | --- | --- | --- |
-| NNNNFA | RSGNA0 | Viewmodel sprites for a gun |
+| NNNNF0 | RSGNA0 | Viewmodel sprites for a gun |
 | NNNNFA[FA] | RSGLA2A8 | Sprites for a projectile |
 | NNNNNNFX | ROGSPEF0 | Sound for a gun being shot |
 | NNNNNNRX | ROGSPER0 | Sound for a gun being reloaded |
