@@ -21,7 +21,7 @@ Class GreenLaser : ProjectileBase
 			Goto Crash;
 		Death:
 		Crash:
-			MSRP B 2 Bright;
+			MSRP B 2 Bright A_PlaySound("RogueSpecial/Impact");
 			MSRP CDE 2 Bright;
 			Stop;
 		XDeath:

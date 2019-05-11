@@ -1,2 +1,4 @@
 // Weapons
 RogueSpecial/Fire	ROGSPEF0
+RogueSpecial/Reload	ROGSPER0
+RogueSpecial/Impact	ROGSPEI0

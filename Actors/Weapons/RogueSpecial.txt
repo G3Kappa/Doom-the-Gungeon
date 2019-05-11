@@ -36,7 +36,7 @@ Class RogueSpecial : WeaponBase replaces Chainsaw
 		
 		Reload:
 			RSGN A 0 A_JumpIf(CountInv("RogueSpecialAmmo") == 8, "Ready");
-			RSGN A 42 Offset(0, 48);
+			RSGN A 42 Offset(0, 48) A_PlaySound("RogueSpecial/Reload");
 			RSGN A 0 A_GiveInventory("RogueSpecialAmmo", 8);
 			Goto Ready;
 		Fire:
