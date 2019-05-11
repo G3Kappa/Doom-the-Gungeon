@@ -9,8 +9,8 @@ GZDoom is required to run this mod. Sacrifices had to be made in order to \*sque
 
 This mod is not multiplayer compatible yet. However, it will be eventually since EtG's coop is wack.
 
-    1. TODO: _Find a way to count passive items from the right player's inventory when shooting bullets._
-    2. TODO: _Figure out respawning mechanics and such._
+1. TODO: _Find a way to count passive items from the right player's inventory when shooting bullets._
+2. TODO: _Figure out respawning mechanics and such._
 
 # Roadmap
 
