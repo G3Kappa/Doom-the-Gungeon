@@ -5,7 +5,11 @@
 
 [GZDoom](https://www.zdoom.org/downloads) is required to run this mod. Sacrifices had to be made in order to \*squeeze the juice\*.
 
-## For Contributors
+# Installing
+
+Simply download the repository as a zip, change the archive's extension to **pk3** and import it in your launcher of choice such as ZDL.
+
+# For Contributors
 
 Sprites are ripped from EtG and converted into 3D sprites manually by first recreating them in [MagicaVoxel](https://ephtracy.github.io/) as 3D models and then passing the exported .vox to [IsoVoxel](https://github.com/tommyettinger/IsoVoxel). **This process is suitable for being automated in the near future**.
 
