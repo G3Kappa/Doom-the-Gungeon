@@ -9,15 +9,19 @@ Class RailgunAmmo : Ammo
 	}
 }
 
+// Tracks the railgun's charge state. When at MaxAmount, the trigger can be released and the gun fires.
+Class _RailgunCharge : Inventory { const MaxAmount = 35; Default { Inventory.MaxAmount MaxAmount; } }
+
 Class Railgun : WeaponBase replaces Shotgun
 {
 	Default 
 	{
 		Inventory.PickupMessage "Calibrating";
 		Weapon.SlotNumber 3;
+		Weapon.AmmoType "RailgunAmmo";
 		Weapon.AmmoGive RailgunAmmo.MaxAmount;
 		Weapon.AmmoUse 1;
-		Weapon.AmmoType "RailgunAmmo";
+		+WEAPON.NOALERT;
 	}
 	
 	States
@@ -43,32 +47,24 @@ Class Railgun : WeaponBase replaces Shotgun
 		Reload:
 			Goto Ready;
 			
-		Fire:
-			RGRD A 1 GiveInventory("_RailgunCharge", 1);
-			RGRD A 0 A_JumpIf(CountInv("_RailgunCharge") > _RailgunCharge.MaxAmount - 1, "HoldingCharge");
-			RGRD A 1 A_Lower; // Charging
-			Goto Ready;
-			
-		HoldingCharge:
-			RGRD A 1 Bright;
-			Goto Ready;
-			
 		Flash:
 			Goto LightDone;
 			
-		Charged:
+		Fire: // Gun is charging
+			RGRD A 0 GiveInventory("_RailgunCharge", 1);
+			RGRD A 0 A_JumpIf(CountInv("_RailgunCharge") > _RailgunCharge.MaxAmount - 1, "HoldingCharge");
+			RGRD A 1 A_Lower;
+			Goto Ready;
+			
+		HoldingCharge: // Gun is fully charged but BT_ATTACK is still pressed
+			RGRD A 1 Bright;
+			Goto Ready;
+			
+		Charged: // Gun is charged and is actually firing
+			TNT1 A 0 A_AlertMonsters;
 			RGRD A 1 A_FireProjectile("Rebar", 0, 1, 14, 4, 0, 0);
 			RGRD A 0 TakeInventory("_RailgunCharge", _RailgunCharge.MaxAmount);
 			Goto Ready;
 			
-	}
-}
-
-Class _RailgunCharge : Inventory 
-{ 
-	const MaxAmount = 25;
-	Default 
-	{
-		Inventory.MaxAmount MaxAmount;
 	}
 }

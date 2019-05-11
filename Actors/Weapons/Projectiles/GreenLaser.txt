@@ -6,7 +6,6 @@ Class GreenLaser : ProjectileBase
 		Height 16;
 		Speed 25;
 		DamageFunction (5);
-		Projectile;
 		Species "PlayerProjectile";
 		DamageType "PlayerDamage";
 		Decal "BulletChip";

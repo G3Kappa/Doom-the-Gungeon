@@ -1,3 +1,5 @@
+#include "Actors/Particles/SmokeTrail.txt"
+
 Class Rebar : ProjectileBase 
 {
 	override void PostBeginPlay()
@@ -10,23 +12,22 @@ Class Rebar : ProjectileBase
 	{
 		Radius 2;
 		Height 16;
-		Speed 100;
+		Speed 7;
 		DamageFunction (50);
-		Projectile;
 		Species "PlayerProjectile";
 		DamageType "PlayerDamage";
 		Decal "BulletChip";
 		BounceSound "RogueSpecial/Impact";
 		+THRUSPECIES;
-		+ROCKETTRAIL;
 		+RIPPER;
 	}
 	
 	States
 	{
 		Spawn:
-			RSGL A 70 Bright Light("L_GreenLaser");
-			Goto Crash;
+			TNT1 A 0 A_SpawnItemEx("SmokeTrail", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			RSGL A 1 Bright Light("L_GreenLaser");
+			Loop;
 			
 		Death:
 		Crash:

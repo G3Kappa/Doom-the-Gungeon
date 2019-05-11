@@ -15,9 +15,9 @@ Class RogueSpecial : WeaponBase replaces Pistol
 	{
 		Inventory.PickupMessage "Underhanded and efficient";
 		Weapon.SlotNumber 2;
+		Weapon.AmmoType "RogueSpecialAmmo";
 		Weapon.AmmoGive RogueSpecialAmmo.MaxAmount;
 		Weapon.AmmoUse 1;
-		Weapon.AmmoType "RogueSpecialAmmo";
 	}
 	
 	States

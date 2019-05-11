@@ -1,0 +1,15 @@
+Class SmokeTrail : Actor
+{
+	Default
+	{
+		+NOBLOCKMAP;
+		+NOGRAVITY;
+		+DONTSPLASH;
+	}
+	States
+	{
+		Spawn:
+			RSMK ABCDEF 3 A_SetScale(frandom(0.25,1));
+			Stop;
+	}
+}
