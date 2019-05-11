@@ -1,0 +1,1 @@
+7z a -tzip DoomTheGungeon.pk3 .\* -xr!_* -xr!.* -xr!*.exe -xr!*.md -xr!*.bat -xr!*.pk3

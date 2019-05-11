@@ -1,0 +1,1 @@
+7z x DoomTheGungeon.pk3 -y
