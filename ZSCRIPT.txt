@@ -3,6 +3,15 @@
 // Items
 #include "Actors/Items/BouncyBullets.txt"
 
+Class Gungeoneer : Doomplayer
+{
+	Default 
+	{
+		Player.StartItem "RogueSpecial";
+		Player.StartItem "RogueSpecialAmmo", 8;
+	}
+}
+
 Class ProjectileBase : Actor 
 {
     override void PostBeginPlay()
