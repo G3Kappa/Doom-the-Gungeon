@@ -65,8 +65,12 @@ TODO
     - Armor
 - Dodge Rolling
 - Blanks
+- Casings
+- Orbitals (Guon Stones, etc.)
 - Chests
     - Mimics
+- NPCs
+    - Shopkeepers
 - Enemy Projectiles
 - Projectile Mechanics:
     - ~~Bouncy Bullets~~
