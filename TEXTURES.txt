@@ -1,0 +1,7 @@
+Sprite RGRDA0, 392, 296
+{
+	XScale 1.2
+	YScale 1.2
+	Offset -190,-50 //or what you need
+	Patch RGRDA0, 0, 0 //simply the name of the sprite
+}

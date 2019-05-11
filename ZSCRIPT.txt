@@ -1,5 +1,6 @@
 // Weapons
 #include "Actors/Weapons/RogueSpecial.txt"
+#include "Actors/Weapons/Railgun.txt"
 // Items
 #include "Actors/Items/BouncyBullets.txt"
 

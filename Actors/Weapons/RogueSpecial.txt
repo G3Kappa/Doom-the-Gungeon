@@ -1,10 +1,11 @@
 #include "Actors/Weapons/Projectiles/GreenLaser.txt"
 
-class RogueSpecialAmmo : Ammo 
+Class RogueSpecialAmmo : Ammo 
 {
+	const MaxAmount = 8;
 	Default
 	{
-		Inventory.MaxAmount 8;
+		Inventory.MaxAmount MaxAmount;
 	}
 }
 
@@ -14,7 +15,7 @@ Class RogueSpecial : WeaponBase replaces Pistol
 	{
 		Inventory.PickupMessage "Underhanded and efficient";
 		Weapon.SlotNumber 2;
-		Weapon.AmmoGive 8;
+		Weapon.AmmoGive RogueSpecialAmmo.MaxAmount;
 		Weapon.AmmoUse 1;
 		Weapon.AmmoType "RogueSpecialAmmo";
 	}
@@ -38,9 +39,9 @@ Class RogueSpecial : WeaponBase replaces Pistol
 			Loop;
 		
 		Reload:
-			RSGN R 0 A_JumpIf(CountInv("RogueSpecialAmmo") == 8, "Ready");
+			RSGN R 0 A_JumpIf(CountInv("RogueSpecialAmmo") == RogueSpecialAmmo.MaxAmount, "Ready");
 			RSGN R 42 Offset(0, 48) A_PlaySound("RogueSpecial/Reload", 1);
-			RSGN R 0 A_GiveInventory("RogueSpecialAmmo", 8);
+			RSGN R 0 A_GiveInventory("RogueSpecialAmmo", RogueSpecialAmmo.MaxAmount);
 			Goto Ready;
 			
 		Fire:

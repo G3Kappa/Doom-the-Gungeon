@@ -1,24 +1,31 @@
-Class GreenLaser : ProjectileBase 
+Class Rebar : ProjectileBase 
 {
+	override void PostBeginPlay()
+	{
+		Super.PostBeginPlay();
+		BounceCount += 40;
+	}
+	
 	Default 
 	{
 		Radius 2;
 		Height 16;
-		Speed 25;
-		DamageFunction (5);
+		Speed 100;
+		DamageFunction (50);
 		Projectile;
 		Species "PlayerProjectile";
 		DamageType "PlayerDamage";
 		Decal "BulletChip";
 		BounceSound "RogueSpecial/Impact";
 		+THRUSPECIES;
+		+ROCKETTRAIL;
+		+RIPPER;
 	}
 	
 	States
 	{
 		Spawn:
-			TNT1 A 2;
-			RSGL A 12 Bright Light("L_GreenLaser");
+			RSGL A 70 Bright Light("L_GreenLaser");
 			Goto Crash;
 			
 		Death:
