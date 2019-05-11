@@ -18,14 +18,17 @@ Class RogueSpecial : WeaponBase replaces Pistol
 		Weapon.AmmoUse 1;
 		Weapon.AmmoType "RogueSpecialAmmo";
 	}
+	
 	States
 	{
 		Spawn:
 			RSGN A -1;
 			Stop;
+			
 		Ready:
 			RSGN A 1 A_WeaponReady(WRF_ALLOWRELOAD);
 			Loop;
+			
 		Select:
 			RSGN A 1 A_Raise;
 			Loop;
@@ -39,6 +42,7 @@ Class RogueSpecial : WeaponBase replaces Pistol
 			RSGN R 42 Offset(0, 48) A_PlaySound("RogueSpecial/Reload", 1);
 			RSGN R 0 A_GiveInventory("RogueSpecialAmmo", 8);
 			Goto Ready;
+			
 		Fire:
 			RSGN A 0 A_GunFlash;
 			RSGN A 0 A_PlaySound("RogueSpecial/Fire", 1);
@@ -55,9 +59,8 @@ Class RogueSpecial : WeaponBase replaces Pistol
 			Goto Ready;
 			
 		Flash:
-			RSGN A 2 Bright Light("GREENLASER0");
-			RSGN B 2 Bright Light("GREENLASER1");
-			TNT1 A 1 Light("GREENLASER0");
+			RSGN A 2 Bright Light("L_GreenLaser");
+			RSGN B 2 Bright Light("L_GreenLaser");
 			Goto LightDone;
 	}
 }
