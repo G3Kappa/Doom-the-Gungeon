@@ -7,7 +7,7 @@
 
 # Installing
 
-Simply download the repository as a zip, change the archive's extension to **pk3** and import it in your launcher of choice such as ZDL. **TODO: Make this not a lie by reorganizing the project structure**
+Download the packed **.pk3** from the [Releases](https://github.com/G3Kappa/Doom-the-Gungeon/releases) page and add it to your launcher of choice, such as [ZDL](https://zdoom.org/wiki/ZDL). Make sure that GZDoom is the selected source port.
 
 # For Contributors
 
