@@ -53,7 +53,7 @@ This mod is not multiplayer compatible yet. However, it will be eventually since
 - B-Tier:
 - A-Tier:
 - S-Tier:
-    - Railgun
+    - ~~Railgun~~
 
 ## Items
 - Passive Items:
