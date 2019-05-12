@@ -5,14 +5,14 @@ Class Rebar : ProjectileBase // FastProjectile would be better but it doesn't al
 	override void PostBeginPlay()
 	{
 		Super.PostBeginPlay();
-		BounceCount += 40;
+		BounceCount += 15;
 	}
 	
 	Default 
 	{
 		Radius 2;
 		Height 16;
-		Speed 100;
+		Speed 120;
 		DamageFunction (50);
 		Species "PlayerProjectile";
 		DamageType "PlayerDamage";

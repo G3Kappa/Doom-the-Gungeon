@@ -2,6 +2,7 @@
 RogueSpecial/Fire	ROGSPEF0
 RogueSpecial/Reload	ROGSPER0
 RogueSpecial/Impact	ROGSPEI0
+Railgun/Fire		RAIGUNF0
 
 // Don't limit sound instances
 $limit RogueSpecial/Impact	0
