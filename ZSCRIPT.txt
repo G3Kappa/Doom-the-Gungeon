@@ -4,6 +4,7 @@
 // Items
 #include "Actors/Items/BouncyBullets.txt"
 #include "Actors/Items/ScatterBullets.txt"
+#include "Actors/Items/FlakBullets.txt"
 // Other
 #include "Actors/Weapons/Projectiles/CustomProjectile.txt"
 
@@ -24,20 +25,40 @@ Class ProjectileBase : CustomProjectile
 		int count = CountInv("ScatterBullets", AAPTR_PLAYER1);
 		for(int i = 0; i < count; ++i)
 		{
-			float v = Vel.Length();
-			Vector3 t = Pos + Vel / v + (frandom(-0.2, 0.2), frandom(-0.2, 0.2), frandom(-0.2, 0.2));
+			Vector3 t = Pos + Vel / Speed + (frandom(-0.2, 0.2), frandom(-0.2, 0.2), frandom(-0.2, 0.2));
 			Vector3 dir = t - Pos;
 			if(dir.Length() != 0) {
 				dir /= dir.Length();
 			}
-			dir *= v;
+			dir *= Speed;
 			
-		
 			A_SpawnItemEx(
 				invoker.GetClassName(), 
 				0, 0, 0, 
 				dir.x, dir.y, dir.z, Angle, 
-				SXF_SETMASTER | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEVELOCITY
+				SXF_SETMASTER | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEVELOCITY | SXF_NOCHECKPOSITION 
+			);
+		}
+	}
+	
+	action void A_FireFlakBullets()
+	{
+		if(master != null) return; // Real bullets have no masters
+		int count = CountInv("FlakBullets", AAPTR_PLAYER1);
+		for(int i = 0; i < count; ++i)
+		{
+			Vector3 t = Pos + Vel / Speed + (frandom(-1, 1), frandom(-1, 1), frandom(-1, 1));
+			Vector3 dir = t - Pos;
+			if(dir.Length() != 0) {
+				dir /= dir.Length();
+			}
+			dir *= Speed;
+			
+			A_SpawnItemEx(
+				invoker.GetClassName(), 
+				0, 0, 0, 
+				dir.x, dir.y, dir.z, Angle, 
+				SXF_SETMASTER | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEVELOCITY | SXF_NOCHECKPOSITION 
 			);
 		}
 	}
@@ -49,7 +70,7 @@ Class ProjectileBase : CustomProjectile
 	
 	action void A_PreDeath()
 	{
-	
+		A_FireFlakBullets();
 	}
 	
     override void PostBeginPlay()
@@ -60,9 +81,15 @@ Class ProjectileBase : CustomProjectile
 	Default 
 	{
 		Projectile;
-		BounceType "Hexen"; // Bounces forever and doesn't lose momentum to walls.
+		// Bouncing is handled a bit differently as CustomProjectile is a special
+		// implementation of FastProjectile. Hexen's bounce type implies
+		// that projectiles bounce on floors and walls as far as flags are concerned.
+		BounceType "Hexen";
+		// 1 = Doesn't bounce. 0 or less = Bounces forever.
 		BounceCount 1;
+		// Attenuation when bouncing off of ceilings and floors
 		BounceFactor 1;
+		// Attenuation when bouncing off of walls
 		WallBounceFactor 1;
 	}
 }

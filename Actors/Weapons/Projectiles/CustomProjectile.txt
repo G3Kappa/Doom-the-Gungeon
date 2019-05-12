@@ -15,7 +15,7 @@ class CustomProjectile : Actor
 	// Doesn't apply BounceFactor or WallBounceFactor.
 	virtual bool _Bounce(Vector3 normal, bool updateVel = false)
 	{
-		if( BounceCount > 0 && BouncesDone++ < BounceCount - 1 ) {
+		if( BounceCount <= 0 || BounceCount > 0 && BouncesDone++ < BounceCount - 1 ) {
 			if(updateVel) Vel = Vel - 2 * (Vel dot normal) * normal;
 			return true;
 		}
