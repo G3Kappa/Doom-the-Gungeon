@@ -3,6 +3,8 @@
 #include "Actors/Weapons/Railgun.txt"
 // Items
 #include "Actors/Items/BouncyBullets.txt"
+// Other
+#include "Actors/Weapons/Projectiles/CustomProjectile.txt"
 
 Class Gungeoneer : Doomplayer
 {
@@ -13,7 +15,7 @@ Class Gungeoneer : Doomplayer
 	}
 }
 
-Class ProjectileBase : Actor 
+Class ProjectileBase : CustomProjectile 
 {
     override void PostBeginPlay()
 	{
