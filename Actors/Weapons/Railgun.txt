@@ -61,6 +61,7 @@ Class Railgun : WeaponBase replaces Shotgun
 			Goto Ready;
 			
 		Charged: // Gun is charged and is actually firing
+			TNT1 A 0 A_PlaySound("Railgun/Fire", 1);
 			TNT1 A 0 A_AlertMonsters;
 			RGRD A 1 A_FireProjectile("Rebar", 0, 1, 14, 4, 0, 0);
 			RGRD A 0 TakeInventory("_RailgunCharge", _RailgunCharge.MaxAmount);

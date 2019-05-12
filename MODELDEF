@@ -1,0 +1,10 @@
+Model Rebar
+{ 
+   Path "Models/Tracers"
+   SKIN 0 "BlueTracer.tga"
+   MODEL 0 "Tracer.md3"
+   Scale 9 3 3
+   PITCHFROMMOMENTUM
+   USEACTORPITCH
+   FrameIndex TRAC A 0 0
+}

@@ -6,3 +6,12 @@ pulselight L_GreenLaser
 	interval 0.5
     attenuate 1
 }
+
+pulselight L_BlueLaser
+{
+    color 0 0 1
+    size 128
+	secondarySize 164
+	interval 0.5
+    attenuate 1
+}
