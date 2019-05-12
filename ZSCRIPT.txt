@@ -3,6 +3,7 @@
 #include "Actors/Weapons/Railgun.txt"
 // Items
 #include "Actors/Items/BouncyBullets.txt"
+#include "Actors/Items/ScatterBullets.txt"
 // Other
 #include "Actors/Weapons/Projectiles/CustomProjectile.txt"
 
@@ -17,6 +18,40 @@ Class Gungeoneer : Doomplayer
 
 Class ProjectileBase : CustomProjectile 
 {
+	action void A_FireScatterBullets()
+	{
+		if(master != null) return; // Real bullets have no masters
+		int count = CountInv("ScatterBullets", AAPTR_PLAYER1);
+		for(int i = 0; i < count; ++i)
+		{
+			float v = Vel.Length();
+			Vector3 t = Pos + Vel / v + (frandom(-0.2, 0.2), frandom(-0.2, 0.2), frandom(-0.2, 0.2));
+			Vector3 dir = t - Pos;
+			if(dir.Length() != 0) {
+				dir /= dir.Length();
+			}
+			dir *= v;
+			
+		
+			A_SpawnItemEx(
+				invoker.GetClassName(), 
+				0, 0, 0, 
+				dir.x, dir.y, dir.z, Angle, 
+				SXF_SETMASTER | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEVELOCITY
+			);
+		}
+	}
+	
+	action void A_PostSpawn()
+	{
+		A_FireScatterBullets();
+	}
+	
+	action void A_PreDeath()
+	{
+	
+	}
+	
     override void PostBeginPlay()
 	{
 		BounceCount = CountInv("BouncyBullets", AAPTR_PLAYER1) + 1;
@@ -29,12 +64,6 @@ Class ProjectileBase : CustomProjectile
 		BounceCount 1;
 		BounceFactor 1;
 		WallBounceFactor 1;
-	}
-	
-	States 
-	{
-		Spawn:
-			Stop;
 	}
 }
 
@@ -50,7 +79,5 @@ Class ItemBase : Inventory
 
 class WeaponBase : Weapon 
 {
-	Default 
-	{
-	}
+
 }

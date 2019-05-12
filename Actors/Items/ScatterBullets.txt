@@ -1,0 +1,7 @@
+Class ScatterBullets : ItemBase
+{
+	Default 
+	{
+		Inventory.PickupMessage "Flakkimus maximus";
+	}
+}
