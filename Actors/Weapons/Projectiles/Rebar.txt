@@ -13,7 +13,7 @@ Class Rebar : ProjectileBase // FastProjectile would be better but it doesn't al
 		Radius 2;
 		Height 16;
 		Speed 120;
-		DamageFunction (50);
+		ProjectileBase.BaseDamage 50;
 		Species "PlayerProjectile";
 		DamageType "PlayerDamage";
 		Decal "BulletChip";
@@ -36,8 +36,8 @@ Class Rebar : ProjectileBase // FastProjectile would be better but it doesn't al
 		XDeath:
 		Death:
 		Crash:
-			TNT1 A 0 A_PreDeath;
 			RSIM A 0 A_PlaySound("RogueSpecial/Impact", 0);
+			RSIM A 1 A_PreDeath;
 			RSIM A 2 Bright A_SetScale(0.6);
 			RSIM B 2 Bright;
 			RSIM BC 1 Bright;

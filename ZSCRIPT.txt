@@ -5,6 +5,8 @@
 #include "Actors/Items/BouncyBullets.txt"
 #include "Actors/Items/ScatterBullets.txt"
 #include "Actors/Items/FlakBullets.txt"
+#include "Actors/Items/SnowBullets.txt"
+#include "Actors/Items/GhostBullets.txt"
 // Other
 #include "Actors/Weapons/Projectiles/CustomProjectile.txt"
 
@@ -17,14 +19,51 @@ Class Gungeoneer : Doomplayer
 	}
 }
 
+Class Pilot : Gungeoneer
+{
+	Default 
+	{
+		Player.StartItem "RogueSpecial";
+		Player.StartItem "RogueSpecialAmmo", 8;
+	}
+}
+
+
 Class ProjectileBase : CustomProjectile 
 {
+	float DamageModifier;
+	float _SnowBulletsDamageModifier; // Increases over time
+	float _GhostBulletsDamageModifier; // Halves with each rip, only relevant for GhostBullets though
+	
+	int ScatterCount;
+	property ScatterCount: ScatterCount;
+	int FlakCount;
+	property FlakCount: FlakCount;
+	
+	float BaseDamage;
+	property BaseDamage: BaseDamage;
+	
+	
+	int PierceCount;
+	int _StoredPierceCount;
+	property PierceCount: PierceCount;
+	
+	int DamageCooldown;
+	int _StoredDamageCooldown;
+	property DamageCooldown: DamageCooldown;
+	
+	int GetDamageModifier()
+	{
+		return DamageModifier;
+	}
+
 	action void A_FireScatterBullets()
 	{
 		if(master != null) return; // Real bullets have no masters
-		int count = CountInv("ScatterBullets", AAPTR_PLAYER1);
+		int count = CountInv("ScatterBullets", AAPTR_PLAYER1) + invoker.ScatterCount;
 		for(int i = 0; i < count; ++i)
 		{
+			// TODO: Circular scatter pattern (now it's a square pattern)
 			Vector3 t = Pos + Vel / Speed + (frandom(-0.2, 0.2), frandom(-0.2, 0.2), frandom(-0.2, 0.2));
 			Vector3 dir = t - Pos;
 			if(dir.Length() != 0) {
@@ -41,10 +80,10 @@ Class ProjectileBase : CustomProjectile
 		}
 	}
 	
-	action void A_FireFlakBullets()
+	action void A_FireFlakBullets() // TODO: Maybe deduplicate with A_FireScatterBullets?
 	{
 		if(master != null) return; // Real bullets have no masters
-		int count = CountInv("FlakBullets", AAPTR_PLAYER1);
+		int count = CountInv("FlakBullets", AAPTR_PLAYER1) + invoker.FlakCount;
 		for(int i = 0; i < count; ++i)
 		{
 			Vector3 t = Pos + Vel / Speed + (frandom(-1, 1), frandom(-1, 1), frandom(-1, 1));
@@ -63,19 +102,87 @@ Class ProjectileBase : CustomProjectile
 		}
 	}
 	
+	// Handles passive items that affect bullets when they spawn. Ex. ScatterBullets.
 	action void A_PostSpawn()
 	{
 		A_FireScatterBullets();
 	}
 	
+	// Handles passive items that affect bullets when they die. Ex. FlakBullets.
 	action void A_PreDeath()
 	{
+		A_SetScale(1); // Temporary fix for snowbullets creating huge death puffs.
 		A_FireFlakBullets();
+	}
+	
+	override void BeginPlay()
+	{
+		DamageModifier = 1;
+		_SnowBulletsDamageModifier = 1;
+		_GhostBulletsDamageModifier = 1;
+		_StoredDamageCooldown = 0;
+		_StoredPierceCount = 0;
 	}
 	
     override void PostBeginPlay()
 	{
+		// This could be done in Tick() but it makes more sense for a bullet
+		// to know how many times it should bounce only when it spawns
 		BounceCount = CountInv("BouncyBullets", AAPTR_PLAYER1) + 1;
+		PierceCount += CountInv("GhostBullets", AAPTR_PLAYER1);
+		
+		if(PierceCount > 0) {
+			bRipper = true;
+		}
+	}
+	
+	// Handles passive items that affect bullets as they travel. Ex. SnowBullets.
+	override void Tick()
+	{
+		Super.Tick();
+		
+		// Rippers only deal damage when _StoredDamageCooldown is 0
+		if(bRipper && _StoredDamageCooldown > 0)
+		{
+			_StoredDamageCooldown--;
+		}
+		
+		bool hasSnowBullets = CountInv("SnowBullets", AAPTR_PLAYER1) > 0;
+		if(hasSnowBullets && _SnowBulletsDamageModifier < 2)
+		{
+			A_SetScale(Scale.x * (1+2.0/35)); // Double every second
+			_SnowBulletsDamageModifier += 1.0/35; // 2 * after two seconds
+		}
+		
+		int BASE_MOD = 1; // TODO: Maybe a player BaseDamage stat or something?
+		DamageModifier = BASE_MOD * _SnowBulletsDamageModifier * _GhostBulletsDamageModifier;
+	}
+	
+	// Overrides damage calculations when hitting monsters to account for modifiers
+	override int SpecialMissileHit(Actor victim)
+	{
+		if(!victim.bIsMonster || !victim.bShootable || !victim.bSolid) return Super.SpecialMissileHit(victim);
+	
+		// Rippers in Doom have a low damage and continuously inflict it
+		// If DamageCooldown is > 0 (default is 2), rippers can deal arbitrary damage
+		// but it will only be dealt once every DamageCooldown tics.
+		// Example: A laser beam that inflicts damage every .5 seconds should set DamageCooldown to 35/2=17 tics.
+		if(bRipper)
+		{
+			if(_StoredDamageCooldown != 0) {
+				return 1;
+			}
+			if(++_StoredPierceCount > PierceCount) {
+				bRipper = false;
+				return 0;
+			}
+			if(_StoredPierceCount > abs(PierceCount - CountInv("GhostBullets", AAPTR_PLAYER1))) {
+				_GhostBulletsDamageModifier *= 0.5;
+			}
+			_StoredDamageCooldown = DamageCooldown;
+		}
+		victim.A_DamageSelf((BaseDamage * DamageModifier), "DtgDamage");
+		return bRipper ? 1 : 0; // -1 = Missile should die, 0 = It should explode, 1 = It should continue
 	}
 	
 	Default 
@@ -91,6 +198,18 @@ Class ProjectileBase : CustomProjectile
 		BounceFactor 1;
 		// Attenuation when bouncing off of walls
 		WallBounceFactor 1;
+		// If > 0 fires copies of this projectile in a scattershot pattern when spawning
+		ProjectileBase.ScatterCount 0;
+		// If > 0 explodes in copies of this projectile upon death
+		ProjectileBase.FlakCount 0;
+		// Since Damage and DamageFunction are wonky, they are not used and BaseDamage is used instead.
+		ProjectileBase.BaseDamage 0;
+		// If PierceCount > 0 the projectile becomes +RIPPER automatically and rips through PierceCount enemies, then loses the flag.
+		ProjectileBase.PierceCount 0;
+		DamageFunction (1); // Hack to bypass IsZeroDamage()
+		// If the projectile is +RIPPER, this property makes it so that it only deals damage every X tics. < 1 to disable.
+		// 2 is enough to prevent double-hits on imps with the railgun but an eye should be kept on this default.
+		ProjectileBase.DamageCooldown 2;
 	}
 }
 
@@ -99,7 +218,7 @@ Class ItemBase : Inventory
 	Default 
 	{
 		Inventory.Amount 1;
-		Inventory.MaxAmount 99;
+		Inventory.MaxAmount 999;
 		+INVENTORY.PERSISTENTPOWER;
 	}
 }

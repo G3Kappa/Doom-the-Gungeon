@@ -1,0 +1,7 @@
+Class SnowBullets : ItemBase
+{
+	Default 
+	{
+		Inventory.PickupMessage "Snowballing out of control";
+	}
+}

@@ -1,0 +1,7 @@
+Class GhostBullets : ItemBase
+{
+	Default 
+	{
+		Inventory.PickupMessage "+RIPPER"; // This is comedy gold don't @ me
+	}
+}
