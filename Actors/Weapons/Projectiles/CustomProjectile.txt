@@ -163,7 +163,6 @@ class CustomProjectile : Actor
 							float moveLen = (Vel.x, Vel.y).Length() * WallBounceFactor;
 							if(moveLen < 1) moveLen = 2;
 							Vel = (moveLen * Cos(dtAngle), moveLen * Sin(dtAngle), Vel.z);
-							A_Print(BouncesDone.."");
 							return;
 							if(bUseBounceState)
 							{
