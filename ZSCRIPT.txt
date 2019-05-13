@@ -262,9 +262,9 @@ Class ProjectileBase : CustomProjectile
 		}
 		
 		float damage = (BaseDamage * DamageModifier);
-		float flt = damage - int(damage);
-		if(Random(0, flt * 100) < flt * 100) {
-			damage += 1;
+		float flt = damage - floor(damage);
+		if(Random(0, 100) < flt * 100) {
+			damage = floor(damage) + 1;
 		}
 		victim.A_DamageSelf(damage, "Unused", DMSS_INFLICTORDMGTYPE, null, "None", AAPTR_TARGET);
 		return bRipper ? 1 : 0; // -1 = Missile should die, 0 = It should explode, 1 = It should continue
