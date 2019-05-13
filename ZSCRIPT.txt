@@ -116,10 +116,14 @@ Class ProjectileBase : CustomProjectile
 			);
 			let proj = ProjectileBase(target);
 			if(invoker.ScatterDamage > 0) {
+				// If ScatterDamage is explicitly mentioned, the main projectile deals regular damage
+				// While the secondary projectiles scale off of it
 				proj._BaseDamageModifier = invoker.ScatterDamage;
 			}
 			else {
-				proj._BaseDamageModifier = 1.0 / count;
+				// Otherwise, the main projectile deals the same damage as every other projectile
+				// Which is inversely proportional to the number of total projectiles spawned this way
+				proj._BaseDamageModifier = _BaseDamageModifier = 1.0 / count;
 			}
 		}
 	}
