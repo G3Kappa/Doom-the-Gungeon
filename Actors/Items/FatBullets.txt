@@ -1,0 +1,7 @@
+Class FatBullets : ItemBase
+{
+	Default 
+	{
+		Inventory.PickupMessage "Fatter = Stronger";
+	}
+}

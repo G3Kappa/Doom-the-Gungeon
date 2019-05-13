@@ -1,0 +1,7 @@
+Class PlusOneBullets : ItemBase
+{
+	Default 
+	{
+		Inventory.PickupMessage "Masterwork bullets";
+	}
+}
