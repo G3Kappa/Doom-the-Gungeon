@@ -1,0 +1,7 @@
+Class StoutBullets : ItemBase
+{
+	Default 
+	{
+		Inventory.PickupMessage "Diagnosed with proptosis";
+	}
+}
