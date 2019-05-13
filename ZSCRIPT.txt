@@ -19,7 +19,13 @@ Class Gungeoneer : Doomplayer
 
 	action void A_StartDodgeRoll()
 	{
-		ThrustThing(Angle * 256/360, 10, 1, Tid);
+		// Right now, theta is where we're facing
+		// TODO: Maybe account for input? Previous attempts failed anyway
+		int theta = Angle * 256/360;
+		// The force of the dodge roll determines how fast it is and how far it goes
+		float force = 25;
+		
+		A_Recoil(-force);
 		invoker.IsDodgeRolling = true;
 	}
 	
