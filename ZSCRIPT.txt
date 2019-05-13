@@ -123,7 +123,7 @@ Class ProjectileBase : CustomProjectile
 			else {
 				// Otherwise, the main projectile deals the same damage as every other projectile
 				// Which is inversely proportional to the number of total projectiles spawned this way
-				proj._BaseDamageModifier = _BaseDamageModifier = 1.0 / count;
+				proj._BaseDamageModifier = invoker._BaseDamageModifier = 1.0 / count;
 			}
 		}
 	}
