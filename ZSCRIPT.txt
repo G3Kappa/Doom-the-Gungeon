@@ -35,6 +35,7 @@ Class ProjectileBase : CustomProjectile
 	float _SnowBulletsDamageModifier; // Increases over time
 	float _GhostBulletsDamageModifier; // Halves with each rip, only relevant for GhostBullets though
 	
+	// These are documented in Default {}
 	int ScatterCount;
 	property ScatterCount: ScatterCount;
 	int FlakCount;
@@ -43,7 +44,6 @@ Class ProjectileBase : CustomProjectile
 	float BaseDamage;
 	property BaseDamage: BaseDamage;
 	
-	
 	int PierceCount;
 	int _StoredPierceCount;
 	property PierceCount: PierceCount;
@@ -51,11 +51,6 @@ Class ProjectileBase : CustomProjectile
 	int DamageCooldown;
 	int _StoredDamageCooldown;
 	property DamageCooldown: DamageCooldown;
-	
-	int GetDamageModifier()
-	{
-		return DamageModifier;
-	}
 
 	action void A_FireScatterBullets()
 	{
@@ -176,6 +171,7 @@ Class ProjectileBase : CustomProjectile
 				bRipper = false;
 				return 0;
 			}
+			// Ghost bullets damage halving should apply after this projectile's innate pierces
 			if(_StoredPierceCount > abs(PierceCount - CountInv("GhostBullets", AAPTR_PLAYER1))) {
 				_GhostBulletsDamageModifier *= 0.5;
 			}
