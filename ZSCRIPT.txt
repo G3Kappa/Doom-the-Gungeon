@@ -15,10 +15,37 @@
 
 Class Gungeoneer : Doomplayer
 {
-	Default 
+	bool IsDodgeRolling;
+
+	action void A_StartDodgeRoll()
 	{
-		Player.StartItem "RogueSpecial";
-		Player.StartItem "RogueSpecialAmmo", 8;
+		ThrustThing(Angle * 256/360, 10, 1, Tid);
+		invoker.IsDodgeRolling = true;
+	}
+	
+	action void A_EndDodgeRoll()
+	{
+		invoker.IsDodgeRolling = false;
+	}
+	
+	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags=0, double angle=0)
+	{
+		// Dodge rolls ignore most kinds of damage
+		if(IsDodgeRolling && !(flags & DMG_FORCED || flags & DMG_FOILINVUL /*|| flags & DMG_EXPLOSION*/))
+		{
+			return 0;
+		}
+		return Super.DamageMobj(inflictor, source, damage, mod, flags, angle);
+	}
+	
+	override bool CanCollideWith(Actor other, bool passive)
+	{
+		// Missiles pass straight through us if we're dodge rolling
+		if(other.bMissile && IsDodgeRolling)
+		{
+			return false;
+		}
+		return Super.CanCollideWith(other, passive);
 	}
 }
 
@@ -153,9 +180,8 @@ Class ProjectileBase : CustomProjectile
 	
     override void PostBeginPlay()
 	{
-		// This could be done in Tick() but it makes more sense for a bullet
-		// to know how many times it should bounce only when it spawns
 		BounceCount = CountInv("BouncyBullets", AAPTR_PLAYER1) + 1;
+		
 		PierceCount += CountInv("GhostBullets", AAPTR_PLAYER1);
 		if(PierceCount > 0) {
 			bRipper = true;
@@ -164,8 +190,10 @@ Class ProjectileBase : CustomProjectile
 		if(IsStout || CountInv("StoutBullets", AAPTR_PLAYER1) > 0) {
 			A_SetScale(Scale.x * 4);
 			_StoutBulletsDamageModifier = 4;
+			// Speed is reduced by 30% but the projectile is already fired (use Vel instead)
 			Vel *= 0.7;
 		}
+		
 		if(CountInv("FatBullets", AAPTR_PLAYER1) > 0) {
 			A_SetScale(Scale.x * 2 * CountInv("FatBullets", AAPTR_PLAYER1));
 		}
@@ -174,8 +202,6 @@ Class ProjectileBase : CustomProjectile
 	// Handles passive items that affect bullets as they travel. Ex. SnowBullets.
 	override void Tick()
 	{
-		Super.Tick();
-		
 		// Rippers only deal damage when _StoredDamageCooldown is 0
 		if(bRipper && _StoredDamageCooldown > 0)
 		{
@@ -185,7 +211,7 @@ Class ProjectileBase : CustomProjectile
 		bool hasSnowBullets = CountInv("SnowBullets", AAPTR_PLAYER1) > 0;
 		if((hasSnowBullets || IsSnowball) && _SnowBulletsDamageModifier < 3)
 		{
-			A_SetScale(Scale.x * (1+4.0/35)); // Double every second
+			A_SetScale(Scale.x * (1+4.0/35));
 			_SnowBulletsDamageModifier *= (1 + 2.0/35);
 		}
 		bool hasStoutBullets = CountInv("StoutBullets", AAPTR_PLAYER1) > 0;
@@ -195,12 +221,16 @@ Class ProjectileBase : CustomProjectile
 			_StoutBulletsDamageModifier *= (1 - 4.0/35);
 		}
 		
-		DamageModifier = _BaseDamageModifier * _SnowBulletsDamageModifier * _GhostBulletsDamageModifier * _StoutBulletsDamageModifier;
+		DamageModifier = _BaseDamageModifier 
+					   * _SnowBulletsDamageModifier 
+					   * _GhostBulletsDamageModifier 
+					   * _StoutBulletsDamageModifier;
 		// One-off modifiers
 		DamageModifier += 1.25 * DamageModifier * CountInv("PlusOneBullets", AAPTR_PLAYER1);
 		DamageModifier += 1.30 * DamageModifier * CountInv("FatBullets", AAPTR_PLAYER1);
 		// TODO: Fat Bullets should increase knockback but knockback is yet to be implemented fully
-		A_Print(""..DamageModifier);
+		
+		Super.Tick();
 	}
 	
 	// Overrides damage calculations when hitting monsters to account for modifiers
@@ -227,7 +257,13 @@ Class ProjectileBase : CustomProjectile
 			}
 			_StoredDamageCooldown = DamageCooldown;
 		}
-		victim.A_DamageSelf((BaseDamage * DamageModifier), "DtgDamage");
+		
+		float damage = (BaseDamage * DamageModifier);
+		float flt = damage - int(damage);
+		if(Random(0, flt * 100) < flt * 100) {
+			damage += 1;
+		}
+		victim.A_DamageSelf(damage, "Unused", DMSS_INFLICTORDMGTYPE, null, "None", AAPTR_TARGET);
 		return bRipper ? 1 : 0; // -1 = Missile should die, 0 = It should explode, 1 = It should continue
 	}
 	
@@ -244,6 +280,10 @@ Class ProjectileBase : CustomProjectile
 		BounceFactor 1;
 		// Attenuation when bouncing off of walls
 		WallBounceFactor 1;
+		// Since Damage and DamageFunction are wonky, they are not used and BaseDamage is used instead.
+		ProjectileBase.BaseDamage 0;
+		// Hack to bypass IsZeroDamage()
+		DamageFunction (1); 
 		// If > 0 fires copies of this projectile in a scattershot pattern when spawning
 		ProjectileBase.ScatterCount 0;
 		// If < 0, damage is BaseDamage/ScatterCount. Otherwise, damage is BaseDamage * ScatterDamage.
@@ -252,16 +292,15 @@ Class ProjectileBase : CustomProjectile
 		ProjectileBase.FlakCount 0;
 		// If < 0, damage is BaseDamage/FlakCount. Otherwise, damage is BaseDamage * FlakDamage.
 		ProjectileBase.FlakDamage -1;
-		// Since Damage and DamageFunction are wonky, they are not used and BaseDamage is used instead.
-		ProjectileBase.BaseDamage 0;
 		// If PierceCount > 0 the projectile becomes +RIPPER automatically and rips through PierceCount enemies, then loses the flag.
 		ProjectileBase.PierceCount 0;
-		DamageFunction (1); // Hack to bypass IsZeroDamage()
+		// TODO: PierceDamage to emulate ghost bullets mechanics?
 		// If the projectile is +RIPPER, this property makes it so that it only deals damage every X tics. < 1 to disable.
 		// 2 is enough to prevent double-hits on imps with the railgun but an eye should be kept on this default.
 		ProjectileBase.DamageCooldown 2;
-		
+		// Projectile is larger and stronger initially and decreases in size and damage as it travels.
 		ProjectileBase.IsStout false;
+		// Projectile increases in size and damage as it travels.
 		ProjectileBase.IsSnowball false;
 	}
 }
@@ -278,5 +317,30 @@ Class ItemBase : Inventory
 
 class WeaponBase : Weapon 
 {
+	bool BoostRofAfterDodge;
+	property BoostRofAfterDodge: BoostRofAfterDodge;
+	
+	Default
+	{
+		// If true, the weapon receives a temporary rate of fire boost after dodge rolling.
+		WeaponBase.BoostRofAfterDodge false;
+	}
+	
 	// TODO: FatBullets should reduce max ammo by 10%
+	States
+	{
+		// Dodge rolling is implemented as all weapons' alt fire
+		AltFire:
+			"####" "#" 1 { 
+				let player = Gungeoneer(self);
+				player.A_StartDodgeRoll(); 
+			}
+			"####" "#" 15 A_Lower;
+			"####" "#" 1 { 
+				let player = Gungeoneer(self);
+				player.A_EndDodgeRoll(); 
+			}
+			"####" "#" 35 A_Raise;
+			"####" "#" 0 ResolveState("Ready");
+	}
 }
