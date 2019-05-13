@@ -84,7 +84,7 @@ Class Railgun : WeaponBase replaces Shotgun
 				A_AlertMonsters();
 				A_Recoil(10);
 			}
-			RGCH E 1 A_FireProjectile("Rebar", 0, 1, 14, 4, 0, 0);
+			RGCH E 1 A_FireProjectile2("Rebar", 0, 1, 14, 4, 0, 0);
 			RGCH D 1 Offset(10, 38);
 			RGCH C 1 Offset(15, 42);
 			RGCH B 1 Offset(20, 40);

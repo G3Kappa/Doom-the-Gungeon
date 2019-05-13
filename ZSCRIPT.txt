@@ -16,7 +16,7 @@
 Class Gungeoneer : Doomplayer
 {
 	bool IsDodgeRolling;
-
+	
 	action void A_StartDodgeRoll()
 	{
 		// Right now, theta is where we're facing
@@ -99,11 +99,17 @@ Class ProjectileBase : CustomProjectile
 	property IsStout: IsStout;
 	bool IsSnowball;
 	property IsSnowball: IsSnowball;
+	
+	int Owner; // PlayerNumber of the player who fired this projectile
+	int GetOwnerPointer()
+	{
+		return AAPTR_PLAYER1 << Owner;
+	}
 
 	action void A_FireScatterBullets()
 	{
 		if(master != null) return; // Real bullets have no masters
-		int count = CountInv("ScatterBullets", AAPTR_PLAYER1) + invoker.ScatterCount;
+		int count = CountInv("ScatterBullets", invoker.GetOwnerPointer()) + invoker.ScatterCount;
 		for(int i = 0; i < count; ++i)
 		{
 			// TODO: Circular scatter pattern (now it's a square pattern)
@@ -137,7 +143,7 @@ Class ProjectileBase : CustomProjectile
 	action void A_FireFlakBullets() // TODO: Maybe deduplicate with A_FireScatterBullets?
 	{
 		if(master != null) return; // Real bullets have no masters
-		int count = CountInv("FlakBullets", AAPTR_PLAYER1) + invoker.FlakCount;
+		int count = CountInv("FlakBullets", invoker.GetOwnerPointer()) + invoker.FlakCount;
 		for(int i = 0; i < count; ++i)
 		{
 			Vector3 t = Pos + Vel / Speed + (frandom(-1, 1), frandom(-1, 1), frandom(-1, 1));
@@ -190,22 +196,22 @@ Class ProjectileBase : CustomProjectile
 	
     override void PostBeginPlay()
 	{
-		BounceCount = CountInv("BouncyBullets", AAPTR_PLAYER1) + 1;
+		BounceCount = CountInv("BouncyBullets", GetOwnerPointer()) + 1;
 		
-		PierceCount += CountInv("GhostBullets", AAPTR_PLAYER1);
+		PierceCount += CountInv("GhostBullets", GetOwnerPointer());
 		if(PierceCount > 0) {
 			bRipper = true;
 		}
 		
-		if(IsStout || CountInv("StoutBullets", AAPTR_PLAYER1) > 0) {
+		if(IsStout || CountInv("StoutBullets", GetOwnerPointer()) > 0) {
 			A_SetScale(Scale.x * 4);
 			_StoutBulletsDamageModifier = 4;
 			// Speed is reduced by 30% but the projectile is already fired (use Vel instead)
 			Vel *= 0.7;
 		}
 		
-		if(CountInv("FatBullets", AAPTR_PLAYER1) > 0) {
-			A_SetScale(Scale.x * 2 * CountInv("FatBullets", AAPTR_PLAYER1));
+		if(CountInv("FatBullets", GetOwnerPointer()) > 0) {
+			A_SetScale(Scale.x * 2 * CountInv("FatBullets", GetOwnerPointer()));
 		}
 	}
 	
@@ -218,13 +224,13 @@ Class ProjectileBase : CustomProjectile
 			_StoredDamageCooldown--;
 		}
 		
-		bool hasSnowBullets = CountInv("SnowBullets", AAPTR_PLAYER1) > 0;
+		bool hasSnowBullets = CountInv("SnowBullets", GetOwnerPointer()) > 0;
 		if((hasSnowBullets || IsSnowball) && _SnowBulletsDamageModifier < 3)
 		{
 			A_SetScale(Scale.x * (1+4.0/35));
 			_SnowBulletsDamageModifier *= (1 + 2.0/35);
 		}
-		bool hasStoutBullets = CountInv("StoutBullets", AAPTR_PLAYER1) > 0;
+		bool hasStoutBullets = CountInv("StoutBullets", GetOwnerPointer()) > 0;
 		if((hasStoutBullets || IsStout) && _StoutBulletsDamageModifier > 0.33)
 		{
 			A_SetScale(Scale.x * (1-4.0/35));
@@ -236,8 +242,8 @@ Class ProjectileBase : CustomProjectile
 					   * _GhostBulletsDamageModifier 
 					   * _StoutBulletsDamageModifier;
 		// One-off modifiers
-		DamageModifier += 1.25 * DamageModifier * CountInv("PlusOneBullets", AAPTR_PLAYER1);
-		DamageModifier += 1.30 * DamageModifier * CountInv("FatBullets", AAPTR_PLAYER1);
+		DamageModifier += 1.25 * DamageModifier * CountInv("PlusOneBullets", GetOwnerPointer());
+		DamageModifier += 1.30 * DamageModifier * CountInv("FatBullets", GetOwnerPointer());
 		// TODO: Fat Bullets should increase knockback but knockback is yet to be implemented fully
 		Super.Tick();
 	}
@@ -261,7 +267,7 @@ Class ProjectileBase : CustomProjectile
 				return 0;
 			}
 			// Ghost bullets damage halving should apply after this projectile's innate pierces
-			if(_StoredPierceCount > abs(PierceCount - CountInv("GhostBullets", AAPTR_PLAYER1))) {
+			if(_StoredPierceCount > abs(PierceCount - CountInv("GhostBullets", GetOwnerPointer()))) {
 				_GhostBulletsDamageModifier *= 0.5;
 			}
 			_StoredDamageCooldown = DamageCooldown;
@@ -272,7 +278,7 @@ Class ProjectileBase : CustomProjectile
 		if(Random(0, 100) < flt * 100) {
 			damage = floor(damage) + 1;
 		}
-		victim.A_DamageSelf(damage, "Unused", DMSS_INFLICTORDMGTYPE, null, "None", AAPTR_TARGET);
+		victim.A_DamageSelf(damage, "Unused", DMSS_INFLICTORDMGTYPE, null, "None", GetOwnerPointer());
 		return bRipper ? 1 : 0; // -1 = Missile should die, 0 = It should explode, 1 = It should continue
 	}
 	
@@ -329,6 +335,14 @@ class WeaponBase : Weapon
 	bool BoostRofAfterDodge;
 	property BoostRofAfterDodge: BoostRofAfterDodge;
 	
+	// Functionally the same as A_FireProjectile but sets the missile's Owner to the player who fired it.
+	// This is needed to properly count inventory items in multiplayer games.
+	action void A_FireProjectile2(class<Actor> missiletype, double angle=0, bool useammo=true, double spawnofs_xy=0, double spawnheight=0, int flags=0, double pitch=0)
+	{
+		let proj = ProjectileBase(A_FireProjectile(missiletype, angle, useammo, spawnofs_xy, spawnheight, flags, pitch));
+		proj.Owner = self.PlayerNumber();
+	}
+	
 	Default
 	{
 		// If true, the weapon receives a temporary rate of fire boost after dodge rolling.
@@ -349,7 +363,7 @@ class WeaponBase : Weapon
 				let player = Gungeoneer(self);
 				player.A_EndDodgeRoll(); 
 			}
-			"####" "#" 35 A_Raise;
+			"####" "#" 10 A_Raise;
 			"####" "#" 0 ResolveState("Ready");
 	}
 }
