@@ -123,7 +123,7 @@ Class ProjectileBase : CustomProjectile
 			else {
 				// Otherwise, the main projectile deals the same damage as every other projectile
 				// Which is inversely proportional to the number of total projectiles spawned this way
-				proj._BaseDamageModifier = invoker._BaseDamageModifier = 1.0 / count;
+				proj._BaseDamageModifier = invoker._BaseDamageModifier = 1.0 / (count + 1);
 			}
 		}
 	}
@@ -233,7 +233,6 @@ Class ProjectileBase : CustomProjectile
 		DamageModifier += 1.25 * DamageModifier * CountInv("PlusOneBullets", AAPTR_PLAYER1);
 		DamageModifier += 1.30 * DamageModifier * CountInv("FatBullets", AAPTR_PLAYER1);
 		// TODO: Fat Bullets should increase knockback but knockback is yet to be implemented fully
-		
 		Super.Tick();
 	}
 	
