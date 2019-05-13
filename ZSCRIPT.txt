@@ -127,6 +127,7 @@ Class ProjectileBase : CustomProjectile
 				SXF_SETMASTER | SXF_ISTARGET | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEVELOCITY | SXF_NOCHECKPOSITION 
 			);
 			let proj = ProjectileBase(target);
+			proj.Owner = invoker.Owner;
 			if(invoker.ScatterDamage > 0) {
 				// If ScatterDamage is explicitly mentioned, the main projectile deals regular damage
 				// While the secondary projectiles scale off of it
@@ -160,6 +161,7 @@ Class ProjectileBase : CustomProjectile
 				SXF_SETMASTER  | SXF_ISTARGET | SXF_ABSOLUTEANGLE | SXF_ABSOLUTEVELOCITY | SXF_NOCHECKPOSITION 
 			);
 			let proj = ProjectileBase(target);
+			proj.Owner = invoker.Owner;
 			if(invoker.FlakDamage > 0) {
 				proj._BaseDamageModifier = invoker.FlakDamage;
 			}
