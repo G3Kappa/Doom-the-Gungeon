@@ -75,11 +75,13 @@ Class Pilot : Gungeoneer
 
 Class ProjectileBase : CustomProjectile 
 {
+	private bool _Alive;
+
 	float DamageModifier;
-	float _BaseDamageModifier;
-	float _SnowBulletsDamageModifier; // Increases over time
-	float _StoutBulletsDamageModifier; // Decreases over time
-	float _GhostBulletsDamageModifier; // Halves with each rip, only relevant for GhostBullets though
+	private float _BaseDamageModifier;
+	private float _SnowBulletsDamageModifier; // Increases over time
+	private float _StoutBulletsDamageModifier; // Decreases over time
+	private float _GhostBulletsDamageModifier; // Halves with each rip, only relevant for GhostBullets though
 	
 	// These are documented in Default {}
 	int ScatterCount;
@@ -183,6 +185,7 @@ Class ProjectileBase : CustomProjectile
 	// Handles passive items that affect bullets when they spawn. Ex. ScatterBullets.
 	action void A_PostSpawn()
 	{
+		_Alive = true;
 		A_FireScatterBullets();
 	}
 	
@@ -191,6 +194,7 @@ Class ProjectileBase : CustomProjectile
 	{
 		A_SetScale(1); // Temporary fix for snowbullets creating huge death puffs.
 		A_FireFlakBullets();
+		_Alive = false;
 	}
 	
 	override void BeginPlay()
@@ -203,6 +207,7 @@ Class ProjectileBase : CustomProjectile
 		_StoutBulletsDamageModifier = 1; // See PostBeginPlay()
 		_StoredDamageCooldown = 0;
 		_StoredPierceCount = 0;
+		_Alive = false; // Must call A_PostSpawn!
 	}
 	
     override void PostBeginPlay()
@@ -262,6 +267,7 @@ Class ProjectileBase : CustomProjectile
 	// Overrides damage calculations when hitting monsters to account for modifiers
 	override int SpecialMissileHit(Actor victim)
 	{
+		if(!_Alive) return 1; // Missiles that didn't call A_PostSpawn ignore collision until they do.
 		if(!victim.bIsMonster || !victim.bShootable || !victim.bSolid) return Super.SpecialMissileHit(victim);
 	
 		// Rippers in Doom have a low damage and continuously inflict it
