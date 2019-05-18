@@ -185,7 +185,7 @@ Class ProjectileBase : CustomProjectile
 	// Handles passive items that affect bullets when they spawn. Ex. ScatterBullets.
 	action void A_PostSpawn()
 	{
-		_Alive = true;
+		invoker._Alive = true;
 		A_FireScatterBullets();
 	}
 	
@@ -194,7 +194,7 @@ Class ProjectileBase : CustomProjectile
 	{
 		A_SetScale(1); // Temporary fix for snowbullets creating huge death puffs.
 		A_FireFlakBullets();
-		_Alive = false;
+		invoker._Alive = false;
 	}
 	
 	override void BeginPlay()
