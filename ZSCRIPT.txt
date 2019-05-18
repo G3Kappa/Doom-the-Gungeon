@@ -185,15 +185,20 @@ Class ProjectileBase : CustomProjectile
 	// Handles passive items that affect bullets when they spawn. Ex. ScatterBullets.
 	action void A_PostSpawn()
 	{
+		if(invoker._Alive) return;
 		invoker._Alive = true;
+		
 		A_FireScatterBullets();
 	}
 	
 	// Handles passive items that affect bullets when they die. Ex. FlakBullets.
 	action void A_PreDeath()
 	{
+		if(!invoker._Alive) return;
+		
 		A_SetScale(1); // Temporary fix for snowbullets creating huge death puffs.
 		A_FireFlakBullets();
+		
 		invoker._Alive = false;
 	}
 	
@@ -267,8 +272,11 @@ Class ProjectileBase : CustomProjectile
 	// Overrides damage calculations when hitting monsters to account for modifiers
 	override int SpecialMissileHit(Actor victim)
 	{
-		if(!_Alive) return 1; // Missiles that didn't call A_PostSpawn ignore collision until they do.
 		if(!victim.bIsMonster || !victim.bShootable || !victim.bSolid) return Super.SpecialMissileHit(victim);
+		// Missiles that didn't call A_PostSpawn yet will do it now, regardless.
+		if(!_Alive) {
+			A_PostSpawn();
+		}
 	
 		// Rippers in Doom have a low damage and continuously inflict it
 		// If DamageCooldown is > 0 (default is 2), rippers can deal arbitrary damage
