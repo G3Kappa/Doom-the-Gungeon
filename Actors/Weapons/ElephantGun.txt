@@ -2,7 +2,7 @@
 
 Class ElephantGunAmmo : Ammo 
 {
-	const MaxAmount = 120;
+	const MaxAmount = 118;
 	Default
 	{
 		Inventory.MaxAmount MaxAmount;
@@ -25,9 +25,13 @@ Class ElephantGun : WeaponBase replaces Shotgun
 	{
 		Inventory.PickupMessage "Shoots Elephants";
 		Weapon.SlotNumber 3;
-		Weapon.AmmoType "ElephantGunAmmo";
-		Weapon.AmmoGive ElephantGunAmmo.MaxAmount;
-		Weapon.AmmoUse 1;
+		Weapon.AmmoType1 "ElephantGunClip";
+		Weapon.AmmoUse1 1;
+		Weapon.AmmoGive1 ElephantGunClip.MaxAmount;
+		Weapon.AmmoType2 "ElephantGunAmmo";
+		Weapon.AmmoUse2 0;
+		Weapon.AmmoGive2 ElephantGunAmmo.MaxAmount;
+		+Weapon.Ammo_Optional;
 	}
 	
 	States
@@ -49,13 +53,18 @@ Class ElephantGun : WeaponBase replaces Shotgun
 			Loop;
 		
 		Reload:
-			ELRD R 53 Offset(0, 48) A_PlaySound("ElephantGun/Reload", 1);
-			TNT1 A 0 A_TakeInventory("ElephantGunClip", ElephantGunClip.MaxAmount);
+			TNT1 A 0 A_JumpIfInventory("ElephantGunClip", ElephantGunClip.MaxAmount, "Ready"); // If the clip is full don't reload
+			TNT1 A 0 A_JumpIfInventory("ElephantGunAmmo", 1, "ReloadReal"); // Reload if there is at least 1 ammo
+			Goto Ready;
+		
+		ReloadReal:
+			ELRD R 53 Offset(0, 48) A_PlaySound("ElephantGun/Reload", 1); // 1.5s reload time
+			TNT1 A 0 A_TakeInventory("ElephantGunAmmo", ElephantGunClip.MaxAmount - CountInv("ElephantGunClip"));
+			TNT1 A 0 A_GiveInventory("ElephantGunClip", ElephantGunClip.MaxAmount);
 			Goto Ready;
 			
 		Fire:
-			TNT1 A 0 A_JumpIfInventory("ElephantGunClip", ElephantGunClip.MaxAmount, "Reload");
-			TNT1 A 0 A_GiveInventory("ElephantGunClip", 1);
+			TNT1 A 0 A_JumpIfNoAmmo("Reload"); // Reload when the clip size is 0
 			TNT1 A 0 A_GunFlash;
 			TNT1 A 0 A_PlaySound("ElephantGun/Fire", 1);
 			TNT1 A 0 A_FireProjectile2("ElephantBullets", 0, 1, 14, 4, 0, 0);
@@ -66,7 +75,7 @@ Class ElephantGun : WeaponBase replaces Shotgun
 			ELRD C 1 Offset(12,37);
 			ELRD D 1 Bright Offset(8,35);
 			ELRD D 1 Bright Offset(4,32);
-			ELRD D 1 Offset(0,32);
+			ELRD D 1 Offset(0,32) A_ReFire;
 			Goto Ready;
 			
 		Flash:
