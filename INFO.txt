@@ -1,0 +1,14 @@
+Right now this file is just a bunch of ideas jotted down.
+
+
+Room types:
+
+	Regular rooms (spawns enemies)
+	Chest rooms (contains a chest)
+	Shop (Shopkeeper)
+	Secret rooms (requires a blank/armor)
+	NPC rooms (i.e. patches and mendy)
+	Boss rooms (defeat to advance)
+	Exit rooms (adjacent to boss rooms)
+	Altar rooms (pray)
+	
