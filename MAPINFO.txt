@@ -1,0 +1,10 @@
+DoomEdNums
+{
+	13000 = KeepAltar
+}
+
+GameInfo
+{
+	PlayerClasses = "Pilot"
+	AddEventHandlers = "DtGDoorHandler"
+}

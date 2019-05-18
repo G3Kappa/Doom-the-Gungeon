@@ -37,7 +37,7 @@ class CustomProjectile : Actor
 			// Do not clip this offset to the floor.
 			hitz += MissileHeight;
 			
-			Actor act = Spawn (trail, (pos.xy, hitz), ALLOW_REPLACE);
+			Actor act = Spawn(trail, (pos.xy, hitz), ALLOW_REPLACE);
 			if (act != null)
 			{
 				if (bGetOwner && target != null)

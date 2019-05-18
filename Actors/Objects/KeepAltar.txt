@@ -1,0 +1,23 @@
+Class KeepAltar : Actor
+{
+	Default
+	{
+		Radius 8;
+		Height 32;
+		ProjectilePassHeight -8;
+		+SOLID;
+	}
+	
+	override bool Used(Actor user)
+	{
+		A_Print("Curse of the lost");
+		return true;
+	}
+	
+	States
+	{
+		Spawn:
+			ALTR A -1;
+			Stop;
+	}
+}

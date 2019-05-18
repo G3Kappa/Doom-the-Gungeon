@@ -1,4 +1,11 @@
-// Weapons
+ version "4.1"
+ 
+// Scripts
+#include "Scripts/RandomizeLayout.zs"
+#include "Scripts/Events/DtGDoorHandler.zs"
+// Dirty hacks
+#include "Actors/Weapons/Projectiles/CustomProjectile.txt"
+// Weapons (they include their own projectiles and effects)
 #include "Actors/Weapons/RogueSpecial.txt"
 #include "Actors/Weapons/Railgun.txt"
 // Items
@@ -10,8 +17,8 @@
 #include "Actors/Items/GhostBullets.txt"
 #include "Actors/Items/PlusOneBullets.txt"
 #include "Actors/Items/FatBullets.txt"
-// Other
-#include "Actors/Weapons/Projectiles/CustomProjectile.txt"
+// Objects
+#include "Actors/Objects/KeepAltar.txt"
 
 Class Gungeoneer : Doomplayer
 {
@@ -34,7 +41,7 @@ Class Gungeoneer : Doomplayer
 		invoker.IsDodgeRolling = false;
 	}
 	
-	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags=0, double angle=0)
+	override int DamageMobj(Actor inflictor, Actor source, int damage, Name mod, int flags, double angle)
 	{
 		// Dodge rolls ignore most kinds of damage
 		if(IsDodgeRolling && !(flags & DMG_FORCED || flags & DMG_FOILINVUL /*|| flags & DMG_EXPLOSION*/))
@@ -100,7 +107,9 @@ Class ProjectileBase : CustomProjectile
 	bool IsSnowball;
 	property IsSnowball: IsSnowball;
 	
-	int Owner; // PlayerNumber of the player who fired this projectile
+	// PlayerNumber of the player who fired this projectile
+	int Owner;
+	// Pointer for the player who fired this projectile. Should be used with CountInv() and similar functions.
 	int GetOwnerPointer()
 	{
 		return AAPTR_PLAYER1 << Owner;
@@ -129,9 +138,8 @@ Class ProjectileBase : CustomProjectile
 			let proj = ProjectileBase(target);
 			proj.Owner = invoker.Owner;
 			if(invoker.ScatterDamage > 0) {
-				// If ScatterDamage is explicitly mentioned, the main projectile deals regular damage
-				// While the secondary projectiles scale off of it
-				proj._BaseDamageModifier = invoker.ScatterDamage;
+				// If ScatterDamage is explicitly mentioned, all projectiles deal a fraction of BaseDamage
+				proj._BaseDamageModifier = invoker._BaseDamageModifier = invoker.ScatterDamage;
 			}
 			else {
 				// Otherwise, the main projectile deals the same damage as every other projectile
@@ -342,7 +350,9 @@ class WeaponBase : Weapon
 	action void A_FireProjectile2(class<Actor> missiletype, double angle=0, bool useammo=true, double spawnofs_xy=0, double spawnheight=0, int flags=0, double pitch=0)
 	{
 		let proj = ProjectileBase(A_FireProjectile(missiletype, angle, useammo, spawnofs_xy, spawnheight, flags, pitch));
-		proj.Owner = self.PlayerNumber();
+		if(proj != null) {
+			proj.Owner = self.PlayerNumber();
+		}
 	}
 	
 	Default
