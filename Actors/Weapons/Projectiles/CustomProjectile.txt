@@ -1,6 +1,6 @@
 // Code adapted from https://github.com/coelckers/gzdoom/blob/b542d1371dd9edf476d13eab3e9d1cf7751e0f9c/wadsrc/static/zscript/actors/shared/fastprojectile.zs
 // Based on FastProjectile but also handles bouncing projectiles.
-class CustomProjectile : Actor
+Class CustomProjectile : Actor
 {
 	int BouncesDone;
 	Default

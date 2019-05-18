@@ -1,0 +1,77 @@
+#include "Actors/Weapons/Projectiles/ElephantBullets.txt"
+
+Class ElephantGunAmmo : Ammo 
+{
+	const MaxAmount = 120;
+	Default
+	{
+		Inventory.MaxAmount MaxAmount;
+	}
+}
+
+Class ElephantGunClip : Ammo 
+{
+	const MaxAmount = 2;
+	Default
+	{
+		Inventory.MaxAmount MaxAmount;
+		+INVENTORY.IGNORESKILL;
+	}
+}
+
+Class ElephantGun : WeaponBase replaces Shotgun
+{
+	Default 
+	{
+		Inventory.PickupMessage "Shoots Elephants";
+		Weapon.SlotNumber 3;
+		Weapon.AmmoType "ElephantGunAmmo";
+		Weapon.AmmoGive ElephantGunAmmo.MaxAmount;
+		Weapon.AmmoUse 1;
+	}
+	
+	States
+	{
+		Spawn:
+			ELRD A -1;
+			Stop;
+			
+		Ready:
+			ELRD A 1 A_WeaponReady(WRF_ALLOWRELOAD);
+			Loop;
+			
+		Select:
+			ELRD A 1 A_Raise;
+			Loop;
+			
+		Deselect:
+			ELRD A 1 A_Lower;
+			Loop;
+		
+		Reload:
+			ELRD R 42 Offset(0, 48) A_PlaySound("RogueSpecial/Reload", 1);
+			TNT1 A 0 A_TakeInventory("ElephantGunClip", ElephantGunClip.MaxAmount);
+			Goto Ready;
+			
+		Fire:
+			TNT1 A 0 A_JumpIfInventory("ElephantGunClip", ElephantGunClip.MaxAmount, "Reload");
+			TNT1 A 0 A_GiveInventory("ElephantGunClip", 1);
+			TNT1 A 0 A_GunFlash;
+			TNT1 A 0 A_PlaySound("RogueSpecial/Fire", 1);
+			TNT1 A 0 A_FireProjectile2("ElephantBullets", 0, 1, 14, 4, 0, 0);
+			ELRD B 1 Offset(5,40);
+			ELRD B 1 Offset(15,48);
+			ELRD B 2 Offset(20,44);
+			ELRD C 1 Offset(18,40);
+			ELRD C 1 Offset(12,37);
+			ELRD D 1 Bright Offset(8,35);
+			ELRD D 1 Bright Offset(4,32);
+			ELRD D 1 Offset(0,32);
+			Goto Ready;
+			
+		Flash:
+			ELRD A 2 Bright Light("L_GreenLaser");
+			ELRD B 2 Bright Light("L_GreenLaser");
+			Goto LightDone;
+	}
+}

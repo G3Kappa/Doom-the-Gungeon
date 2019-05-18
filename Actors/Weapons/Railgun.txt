@@ -12,12 +12,12 @@ Class RailgunAmmo : Ammo
 // Tracks the railgun's charge state. When at MaxAmount, the trigger can be released and the gun fires.
 Class _RailgunCharge : Inventory { const MaxAmount = 35; Default { Inventory.MaxAmount MaxAmount; } }
 
-Class Railgun : WeaponBase replaces Shotgun
+Class Railgun : WeaponBase replaces PlasmaGun
 {
 	Default 
 	{
 		Inventory.PickupMessage "Calibrating";
-		Weapon.SlotNumber 3;
+		Weapon.SlotNumber 6;
 		Weapon.AmmoType "RailgunAmmo";
 		Weapon.AmmoGive RailgunAmmo.MaxAmount;
 		Weapon.AmmoUse 1;

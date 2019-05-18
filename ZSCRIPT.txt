@@ -8,6 +8,7 @@
 // Weapons (they include their own projectiles and effects)
 #include "Actors/Weapons/RogueSpecial.txt"
 #include "Actors/Weapons/Railgun.txt"
+#include "Actors/Weapons/ElephantGun.txt"
 // Items
 #include "Actors/Items/BouncyBullets.txt"
 #include "Actors/Items/ScatterBullets.txt"
